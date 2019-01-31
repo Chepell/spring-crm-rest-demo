@@ -36,7 +36,7 @@ public class CustomerRestController {
 		return customer;
 	}
 
-	// endpoint to add update existing customer
+	// endpoint to update existing customer
 	@PutMapping("/customers")
 	public Customer updateCustomer(@RequestBody Customer customer) {
 		// just update existing object in DB

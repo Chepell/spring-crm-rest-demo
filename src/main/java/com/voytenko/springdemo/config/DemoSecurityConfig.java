@@ -48,12 +48,15 @@ public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
 		//
 
 		http.authorizeRequests()
+				// Get a list of all customers.  GET /api/customers
 				.antMatchers(HttpMethod.GET, "/api/customers").hasRole("EMPLOYEE")
+				// Get a single customer.  GET /api/customers/{customerId}
 				.antMatchers(HttpMethod.GET, "/api/customers/**").hasRole("EMPLOYEE")
+				// Add a new customer.  POST /api/customers
 				.antMatchers(HttpMethod.POST, "/api/customers").hasAnyRole("MANAGER", "ADMIN")
-				.antMatchers(HttpMethod.POST, "/api/customers/**").hasAnyRole("MANAGER", "ADMIN")
+				// Update an existing customer.  PUT /api/customers
 				.antMatchers(HttpMethod.PUT, "/api/customers").hasAnyRole("MANAGER", "ADMIN")
-				.antMatchers(HttpMethod.PUT, "/api/customers/**").hasAnyRole("MANAGER", "ADMIN")
+				// Delete a customer.  DELETE /api/customers/{customerId}
 				.antMatchers(HttpMethod.DELETE, "/api/customers/**").hasRole("ADMIN")
 				.and()
 				.httpBasic()
