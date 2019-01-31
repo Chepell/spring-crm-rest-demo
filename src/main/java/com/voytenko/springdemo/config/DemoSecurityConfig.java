@@ -1,5 +1,6 @@
 package com.voytenko.springdemo.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -10,20 +11,20 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.User.UserBuilder;
 
+import javax.sql.DataSource;
+
 @Configuration
 @EnableWebSecurity
 public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
 
+	// inject dependency
+	@Autowired
+	private DataSource myDataSource;
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
-		// add our users for in memory authentication
-		UserBuilder users = User.withDefaultPasswordEncoder();
-
-		auth.inMemoryAuthentication()
-				.withUser(users.username("john").password("test123").roles("EMPLOYEE"))
-				.withUser(users.username("mary").password("test123").roles("EMPLOYEE", "MANAGER"))
-				.withUser(users.username("susan").password("test123").roles("EMPLOYEE", "ADMIN"));
+		// get users, passwords (bcrypt) and roles from database
+		auth.jdbcAuthentication().dataSource(myDataSource);
 	}
 
 	@Override
@@ -78,7 +79,7 @@ public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// Why disable sessions?
 		//
-		// For our application, we would like avoid the use of cookies for sesson tracking.
+		// For our application, we would like avoid the use of cookies for session tracking.
 		// This should force the REST client to enter user name and password for each request.
 		// However, this is not always the case depending on the REST client / browser
 		// you are using. Your mileage will vary here (for example, this doesn't work in Eclipse embedded browser).
